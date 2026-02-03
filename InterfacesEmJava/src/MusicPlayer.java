@@ -1,6 +1,6 @@
 public interface MusicPlayer {
 
-    //todas as propriedades que vai declarar na interfae ja são public, final e static
+    //todas as propriedades que vai declarar na interface ja são public, final e static
     String music = "Parabéns pra você";
     //nao pode ter construtores em interfaces
 
