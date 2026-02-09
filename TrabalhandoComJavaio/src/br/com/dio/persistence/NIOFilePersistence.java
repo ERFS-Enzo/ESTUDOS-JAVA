@@ -2,18 +2,12 @@ package br.com.dio.persistence;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
-public class NIOFilePersistence implements FilePersistence{
+public class NIOFilePersistence extends FilePersistence{
 
-    private final String currentDir = System.getProperty("user.dir");
-    private final String storeDir = "/managedFiles/NIO/";
-    private final String fileName;
 
-    public NIOFilePersistence(String fileName) throws IOException {
-        this.fileName = fileName;
+    public NIOFilePersistence(final String fileName) throws IOException {
+        super(fileName, "/managedFiles/NIO/");
         var file = new File(currentDir + storeDir);
         if(!file.exists() && !file.mkdirs()) throw new IOException("Erro ao criar o arquivo");
         clearFile();
@@ -29,32 +23,6 @@ public class NIOFilePersistence implements FilePersistence{
             ex.printStackTrace();
         }
         return data;
-    }
-
-    @Override
-    public boolean remove(final String sentence) {
-        var contentList = toListString();
-
-        if(contentList.stream().noneMatch(c -> c.contains(sentence))) return false;
-
-        clearFile();
-        contentList.stream()
-                .filter(c -> !c.contains(sentence))
-                .forEach(this::write);
-        return true;
-    }
-
-    @Override
-    public String replace(String oldContent, String newContent) {
-        var contentList = toListString();
-
-        if(contentList.stream().noneMatch(c -> c.contains(oldContent))) return "";
-
-        clearFile();
-        contentList.stream()
-                .map(c -> c.contains(oldContent) ? newContent : c)
-                .forEach(this::write);
-        return newContent;
     }
 
     @Override
@@ -112,17 +80,4 @@ public class NIOFilePersistence implements FilePersistence{
         return content.toString();
     }
 
-    private List<String> toListString() {
-        var content = findAll();
-        return new ArrayList<>(Stream.of(content.split(System.lineSeparator())).toList());
-
-    }
-
-    private void clearFile(){
-        try(OutputStream outputStream = new FileOutputStream(currentDir + storeDir + fileName)) {
-            System.out.println();
-        }catch(IOException ex){
-            ex.printStackTrace();
-        }
-    }
 }
